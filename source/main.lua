@@ -107,7 +107,6 @@ local applicationData = datastore.read()
 if applicationData == nil then
     applicationData = {
         currentCalculatorMode = kStandardMode,
-        openKeyboardWithCrank = true,
         scientificHistory = "",
     }
 
@@ -118,11 +117,6 @@ end
 local menu = playdate.getSystemMenu()
 local calculatorModeMenu = menu:addOptionsMenuItem(graphics.getLocalizedText("calculatorModeMenu"), calculatorModes, applicationData.currentCalculatorMode, function (mode)
     applicationData.currentCalculatorMode = mode
-    datastore.write(applicationData)
-end)
-
-local keyboardCrankMenu = menu:addCheckmarkMenuItem(graphics.getLocalizedText("useCrankMenu"), applicationData.openKeyboardWithCrank, function (value)
-    applicationData.openKeyboardWithCrank = value
     datastore.write(applicationData)
 end)
 
@@ -255,22 +249,20 @@ local function drawScientificCalculatorMode()
     end
 
     -- Draw crank indicator if crank is docked
-    if applicationData.openKeyboardWithCrank then
-        if playdate.isCrankDocked() then
+    if playdate.isCrankDocked() then
             ui.crankIndicator:draw()
         end
+    
+    if bButtonImage ~= nil then
+        bButtonImage:draw(20 + buttonImagesSize + aButtonTextWidth, screenHeight - buttonImagesSize - 4)
+        graphics.drawText(graphics.getLocalizedText("bButtonOpenKeyboard"), 24 + buttonImagesSize * 2 + aButtonTextWidth, screenHeight - buttonImagesSize - 4)
     else
-        if bButtonImage ~= nil then
-            bButtonImage:draw(20 + buttonImagesSize + aButtonTextWidth, screenHeight - buttonImagesSize - 4)
-            graphics.drawText(graphics.getLocalizedText("bButtonOpenKeyboard"), 24 + buttonImagesSize * 2 + aButtonTextWidth, screenHeight - buttonImagesSize - 4)
-        else
-            -- Unexpected but, if it happens, this row will be a little lower than the one for A button error
-            graphics.drawText(graphics.getLocalizedText("bButtonError"), 4, screenHeight - buttonImagesSize + 4)
-        end
+        -- Unexpected but, if it happens, this row will be a little lower than the one for A button error
+        graphics.drawText(graphics.getLocalizedText("bButtonError"), 4, screenHeight - buttonImagesSize + 4)
+    end
 
-        if playdate.buttonJustReleased(playdate.kButtonB) then
-            keyboard.show(scientificFormula)
-        end
+    if playdate.buttonJustReleased(playdate.kButtonB) then
+        keyboard.show(scientificFormula)
     end
 end
 
