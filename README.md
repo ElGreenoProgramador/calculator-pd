@@ -2,7 +2,9 @@
 A personal project to learn Lua Programming Language and Playdate application development!
 
 ## Screenshots
-
+![Standard mode](screenshots/standard_mode.png)
+![Scientific mode](screenshots/scientific_mode.png)
+![Info](screenshots/info-mode.png)
 
 ## Sources
 - [SquidGodDev's template](https://github.com/SquidGodDev/playdate-template)
