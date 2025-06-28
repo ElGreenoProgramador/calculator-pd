@@ -1,8 +1,9 @@
 name=Math Calculator
-author=LordRibblesdale
+author=ElGreenoProgramador
 description=A personal tech demo of a calculator for Playdate
-bundleID=
-version=1.0.0
-buildNumber=1
+bundleID=com.elgreeno.mathcalculator
+version=1.0.2
+buildNumber=6
+imagePath=launcher/images
 pdxversion=20703
-buildtime=804453592
+buildtime=804464643

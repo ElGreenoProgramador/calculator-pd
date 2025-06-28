@@ -29,11 +29,13 @@ local calculatorModes <const> = {kStandardMode, kScientificMode, kInfoMode}
 local screenWidth <const> = display.getWidth()
 local screenHeight <const> = display.getHeight()
 
+local systemFont <const> = graphics.getSystemFont()
+
 -- Defining text widths
 local applicationTitleTextWidth <const> = graphics.getSystemFont(font.kVariantBold):getTextWidth(applicationTitle)
-local aButtonTextWidth <const> = graphics.getSystemFont():getTextWidth(graphics.getLocalizedText("aButtonCompute"))
-local bButtonTextWidth <const> = graphics.getSystemFont():getTextWidth(graphics.getLocalizedText("bButtonOpenKeyboard"))
-local systemFontHeight <const> = graphics.getSystemFont():getHeight()
+local aButtonTextWidth <const> = systemFont:getTextWidth(graphics.getLocalizedText("aButtonCompute"))
+local bButtonTextWidth <const> = systemFont:getTextWidth(graphics.getLocalizedText("bButtonOpenKeyboard"))
+local systemFontHeight <const> = systemFont:getHeight()
 
 -- Defining assets
 local buttonImagesSize <const> = 16
@@ -41,13 +43,15 @@ local buttonsImage <const> = graphics.imagetable.new("images/playdate-icons-by-m
 local aButtonImage <const> = buttonsImage:getImage(6)
 local bButtonImage <const> = buttonsImage:getImage(7)
 
-local qrCodeSize <const> = 126
-local qrCodeImageScale <const> = 1.5
+local qrCodeSize <const> = 158
+local qrCodeImageScale <const> = 1
 local acknowledgementsImage <const> = graphics.image.new("images/acknowledgements")
+
+local backgroundImage <const> = graphics.image.new("images/background")
 
 local standardButtons <const> = {
       "7", "8", "9", "/", "sin",
-      "4", "5", "6", "x", "cos",
+      "4", "5", "6", "*", "cos",
       "1", "2", "3", "-", "deg",
     "del", "0", ".", "+", "rad"
 }
@@ -69,7 +73,7 @@ function standardButtonsGrid:drawCell(section, row, column, selected, x, y, widt
     end
 
     local cellText = standardButtons[(row - 1) * standardButtonsColumns + column]
-    graphics.drawTextInRect(cellText, x, y + (height / 2 - systemFontHeight / 2) + 2, width, height, nil, nil, kTextAlignment.center)
+    graphics.drawTextInRect(cellText, x, y + (height / 2 - systemFontHeight / 2) + 2, width, height, nil, nil, kTextAlignment.center, systemFont)
 end
 
 if playdate.isSimulator then
@@ -79,7 +83,8 @@ if playdate.isSimulator then
         "Made by Domenico Verde (ElGreenoProgramador)\n\
         Thanks to SquidGodDev for making available a Playdate template (https://github.com/SquidGodDev/playdate-template)\n\
         Thanks to Mina Harker for making Playdate 16-bit icons (https://minalien.itch.io/playdate-16px-input-icons)\n\
-        Thanks to bytexenon for MathParser.lua (https://github.com/bytexenon/MathParser.lua/blob/main/example.lua)",
+        Thanks to bytexenon for MathParser.lua (https://github.com/bytexenon/MathParser.lua/blob/main/example.lua)\n\
+        Thanks to potch dot me for the tool Playdither (https://www.potch.me/demos/playdither/)",
         0,
         function (image)
             simulator.writeToFile(image, "~/acknowledgements.png")
@@ -186,13 +191,13 @@ local function drawStandardCalculatorMode()
     graphics.drawText(string.format("*%s*", graphics.getLocalizedText("inputEntry")), 10, 24)
 
     graphics.drawRoundRect(8, 44, 164, 104, 4)
-    graphics.drawTextInRect(standardFormula, 12, 48, 160, 100, nil, "...")
+    graphics.drawTextInRect(standardFormula, 12, 48, 160, 100, nil, "...", nil, systemFont)
 
     -- Text area (external and internal) for output
     graphics.drawText(string.format("*%s*", graphics.getLocalizedText("outputEntry")), 10, 154)
 
     graphics.drawRoundRect(8, 174, 164, 32, 4)
-    graphics.drawTextInRect(standardOutputValue, 12, 178, 160, 28, nil, "...")
+    graphics.drawTextInRect(standardOutputValue, 12, 178, 160, 28, nil, "...", nil, systemFont)
 
     -- Drawing buttons grid
     graphics.drawText(string.format("*%s*", graphics.getLocalizedText("keyboardEntry")), 182, 24)
@@ -216,30 +221,30 @@ local function drawStandardCalculatorMode()
 end
 
 local function drawScientificCalculatorMode()
-    if playdate.buttonJustPressed(playdate.kButtonB) then
-        xpcall(
-            function () scientificOutputValue = tostring(parser:solve(scientificFormula)) end,
-            function (err) scientificOutputValue = err end
-        )
-    end
-
     -- Drawing for input area
     graphics.drawText(string.format("*%s*", graphics.getLocalizedText("inputEntry")), 10, 24)
 
     graphics.drawRoundRect(8, 44, 188, 104, 4)
-    graphics.drawTextInRect(scientificFormula, 12, 48, 184, 100, nil, "...")
+    graphics.drawTextInRect(scientificFormula, 12, 48, 184, 100, nil, "...", nil, systemFont)
 
     -- Text area (external and internal) for output
     graphics.drawText(string.format("*%s*", graphics.getLocalizedText("outputEntry")), 10, 154)
 
     graphics.drawRoundRect(8, 174, 188, 32, 4)
-    graphics.drawTextInRect(scientificOutputValue, 12, 178, 184, 28, nil, "...")
+    graphics.drawTextInRect(scientificOutputValue, 12, 178, 184, 28, nil, "...", nil, systemFont)
 
     -- Listing of computation history
     graphics.drawText(string.format("*%s*", graphics.getLocalizedText("historyEntry")), 206, 24)
 
     graphics.drawRoundRect(204, 44, 188, 104, 4)
-    graphics.drawTextInRect(applicationData.scientificHistory, 208, 48, 184, 100, nil, "...")
+    graphics.drawTextInRect(applicationData.scientificHistory, 208, 48, 184, 100, nil, "...", nil, systemFont)
+
+    if playdate.buttonJustPressed(playdate.kButtonA) then
+        xpcall(
+            function () scientificOutputValue = tostring(parser:solve(scientificFormula)) end,
+            function (err) scientificOutputValue = err end
+        )
+    end
 
     -- Bottom side
     if aButtonImage ~= nil then
@@ -270,6 +275,8 @@ local function drawScientificCalculatorMode()
 end
 
 local function drawInfoMode()
+    keyboard.hide()
+
     if acknowledgementsImage then
         local offset = qrCodeSize * qrCodeImageScale / 2
         acknowledgementsImage:drawScaled(200 - offset, 120 - offset, qrCodeImageScale)
@@ -282,6 +289,10 @@ end
 function playdate.update()
     -- Clear screen
     graphics.clear()
+
+    if backgroundImage and applicationData.currentCalculatorMode ~= kInfoMode then
+        backgroundImage:draw(0, 0)
+    end
 
     graphics.drawText(applicationTitle, 4, 4)
     graphics.drawText(applicationData.currentCalculatorMode, applicationTitleTextWidth, 4)
