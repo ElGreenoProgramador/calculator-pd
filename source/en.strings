@@ -1,0 +1,21 @@
+-- Global strings
+"applicationTitle" = "Math Calculator"
+"standardMode" = "standard"
+"scientificMode" = "scientific"
+"infoMode" = "info"
+"calculatorModeMenu" = "mode"
+"aButtonError" = "Error loading A button image!"
+"bButtonError" = "Error loading B button image!"
+
+-- Standard mode strings
+"keyboardEntry" = "keyboard"
+"aButtonPress" = "Select"
+"bButtonCompute" = "Compute!"
+
+-- Scientific mode strings
+"useCrankMenu" = "use crank"
+"aButtonCompute" = "Compute!"
+"bButtonOpenKeyboard" = "Open keyboard"
+"inputEntry" = "input"
+"outputEntry" = "output"
+"historyEntry" = "history"
