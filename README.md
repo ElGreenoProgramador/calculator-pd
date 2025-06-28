@@ -2,8 +2,8 @@
 A personal project to learn Lua Programming Language and Playdate application development!
 
 ## Screenshots
-![Standard mode](screenshots/standard_mode.png)
-![Scientific mode](screenshots/scientific_mode.png)
+![Standard mode](screenshots/standard-mode.png)
+![Scientific mode](screenshots/scientific-mode.png)
 ![Info](screenshots/info-mode.png)
 
 ## Sources
